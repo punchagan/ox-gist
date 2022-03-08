@@ -8,7 +8,7 @@
 ;;; Code:
 
 (require 'gist)
-(require 'ox-hugo) ;; FIXME: Remove dependency in favor of other slug function
+(require 's)
 
 (defun org-subtree-to-gist-dwim (&optional public)
   "Post or update current org subtree as a gist.
@@ -26,7 +26,7 @@ doesn't toggle the public/private status when editing gists."
              (switch-to-buffer-preserve-window-point t)
              (gist-id (org-entry-get (point) "GIST_ID"))
              (title (org-get-heading t t t t))
-             (filename (format "%s.org" (org-hugo-slug title)))
+             (filename (format "%s.org" (s-dashed-words title)))
              (content-buffer (current-buffer))
              (export-buffer (org-org-export-as-org nil t nil t))
              gist)
