@@ -28,16 +28,12 @@
             (flet ((gist-ask-for-description-maybe () ((lambda () title))))
               (rename-buffer filename)
               (gist-region (point-min) (point-max) t)
-              (kill-buffer)
               (switch-to-buffer content-buffer)
               (org-set-property "GIST_ID" (car (last (split-string (current-kill 0 t) "/")))))
           (progn
             (gist-fetch gist-id)
             (replace-buffer-contents export-buffer)
             (gist-mode-edit-buffer filename)
-            (kill-buffer)
-            (with-current-buffer export-buffer
-              (kill-buffer))
             (setq gist (gist-list-db-get-gist gist-id))
             (kill-new (oref gist :html-url))
             ;; Edit description, if required
@@ -47,6 +43,7 @@
                               :files nil
                               :description title)))
                 (gh-gist-edit api g)))))
+        (kill-buffer export-buffer)
         (message (format "Gist URL: %s (copied to clipboard)" (car kill-ring)))))))
 
 (provide 'org2gist)
