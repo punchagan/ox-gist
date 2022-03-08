@@ -42,11 +42,11 @@
             (kill-new (oref gist :html-url))
             ;; Edit description, if required
             (unless (string= title (oref gist :description))
-              (gist-list-user 'current-user t nil)
-              (flet ((tabulated-list-get-id () ((lambda () gist-id)))
-                     (read-from-minibuffer (x y) ((lambda () title)))
-                     (gist-list-reload () ()))
-                (gist-edit-current-description)))))
+              (let ((api (gist-get-api t))
+                    (g (clone gist
+                              :files nil
+                              :description title)))
+                (gh-gist-edit api g)))))
         (message (format "Gist URL: %s (copied to clipboard)" (car kill-ring)))))))
 
 (provide 'org2gist)
