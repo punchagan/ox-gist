@@ -34,6 +34,7 @@
 
 (require 'gist)
 (require 's)
+(require 'org)
 
 (defun org2gist-subtree-dwim (&optional public)
   "Post or update current org subtree as a gist.
@@ -57,7 +58,7 @@ doesn't toggle the public/private status when editing gists."
              (export-buffer (org-org-export-as-org nil t nil t))
              gist)
         (if (null gist-id)
-            (flet ((gist-ask-for-description-maybe () ((lambda () title))))
+            (cl-letf (((symbol-function 'gist-ask-for-description-maybe) (lambda () title)))
               (rename-buffer filename)
               (gist-region (point-min) (point-max) (= public '1))
               (switch-to-buffer content-buffer)
