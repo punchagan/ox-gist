@@ -1,9 +1,32 @@
 ;;; org2gist --- Easily share an org subtree as a gist
 
+;; Copyright (C) 2022 Puneeth Chaganti
+
+;; Author: Puneeth Chaganti <punchagan+emacs@muse-amuse.in>
+;; Created: 2022 March 08
+;; Keywords: org, lisp, gist, github
+;; URL: <https://github.com/punchagan/org2gist/>
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
-;;; Often, I find myself wanting to share a subtree from my notes file,
-;;; publicly.  It is convenient to use gists for this, since GitHub renders the
-;;; org syntax correctly.  This package makes it easy to do that.
+
+;; Often, I find myself wanting to share a subtree from my notes file,
+;; publicly.  It is convenient to use gists for this, since GitHub renders the
+;; org syntax correctly.  This package makes it easy to do that.
 
 ;;; Code:
 
