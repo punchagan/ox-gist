@@ -10,9 +10,15 @@
 (require 'gist)
 (require 'ox-hugo) ;; FIXME: Remove dependency in favor of other slug function
 
-(defun org-subtree-to-gist-dwim ()
-  "Post or update current org subtree as a gist."
-  (interactive)
+(defun org-subtree-to-gist-dwim (&optional public)
+  "Post or update current org subtree as a gist.
+
+If PUBLIC is non-nil, the gist is posted as a public gist.  Call
+the function with a prefix arg (`universal-argument') to post a
+public gist.  NOTE: The argument only works for new gists.  It
+doesn't toggle the public/private status when editing gists."
+
+  (interactive "p")
   (save-window-excursion
     (save-excursion
       (let* ((org-export-with-toc nil)
@@ -27,7 +33,7 @@
         (if (null gist-id)
             (flet ((gist-ask-for-description-maybe () ((lambda () title))))
               (rename-buffer filename)
-              (gist-region (point-min) (point-max) t)
+              (gist-region (point-min) (point-max) (= public '1))
               (switch-to-buffer content-buffer)
               (org-set-property "GIST_ID" (car (last (split-string (current-kill 0 t) "/")))))
           (progn
