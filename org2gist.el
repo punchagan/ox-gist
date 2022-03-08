@@ -23,7 +23,7 @@
              (filename (format "%s.org" (org-hugo-slug title)))
              (content-buffer (current-buffer))
              (export-buffer (org-org-export-as-org nil t nil t))
-             gist-obj)
+             gist)
         (if (null gist-id)
             (flet ((gist-ask-for-description-maybe () ((lambda () title))))
               (rename-buffer filename)
@@ -38,10 +38,10 @@
             (kill-buffer)
             (with-current-buffer export-buffer
               (kill-buffer))
-            (setq gist-obj (gist-list-db-get-gist gist-id))
-            (kill-new (oref gist-obj :html-url))
+            (setq gist (gist-list-db-get-gist gist-id))
+            (kill-new (oref gist :html-url))
             ;; Edit description, if required
-            (unless (string= title (oref gist-obj :description))
+            (unless (string= title (oref gist :description))
               (gist-list-user 'current-user t nil)
               (flet ((tabulated-list-get-id () ((lambda () gist-id)))
                      (read-from-minibuffer (x y) ((lambda () title)))
