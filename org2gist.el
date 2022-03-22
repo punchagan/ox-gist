@@ -63,19 +63,18 @@ doesn't toggle the public/private status when editing gists."
               (gist-region (point-min) (point-max) (= public '1))
               (switch-to-buffer content-buffer)
               (org-set-property "GIST_ID" (car (last (split-string (current-kill 0 t) "/")))))
-          (progn
-            (gist-fetch gist-id)
-            (replace-buffer-contents export-buffer)
-            (gist-mode-edit-buffer filename)
-            (setq gist (gist-list-db-get-gist gist-id))
-            (kill-new (oref gist :html-url))
-            ;; Edit description, if required
-            (unless (string= title (oref gist :description))
-              (let ((api (gist-get-api t))
-                    (g (clone gist
-                              :files nil
-                              :description title)))
-                (gh-gist-edit api g)))))
+          (gist-fetch gist-id)
+          (replace-buffer-contents export-buffer)
+          (gist-mode-edit-buffer filename)
+          (setq gist (gist-list-db-get-gist gist-id))
+          (kill-new (oref gist :html-url))
+          ;; Edit description, if required
+          (unless (string= title (oref gist :description))
+            (let ((api (gist-get-api t))
+                  (g (clone gist
+                            :files nil
+                            :description title)))
+              (gh-gist-edit api g))))
         (kill-buffer export-buffer)
         (message "Gist URL: %s (copied to clipboard)" (car kill-ring))))))
 
