@@ -67,9 +67,9 @@ doesn't toggle the public/private status when editing gists."
           (replace-buffer-contents export-buffer)
           (gist-mode-edit-buffer filename)
           (setq gist (gist-list-db-get-gist gist-id))
-          (kill-new (oref gist :html-url))
+          (kill-new (slot-value gist 'html-url))
           ;; Edit description, if required
-          (unless (string= title (oref gist :description))
+          (unless (string= title (slot-value gist 'description))
             (let ((api (gist-get-api t))
                   (g (clone gist
                             :files nil
