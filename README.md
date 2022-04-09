@@ -4,7 +4,7 @@ Copyright (C) 2022 Puneeth Chaganti
 
 * Author: Puneeth Chaganti <punchagan+emacs@muse-amuse.in>
 * Created: 2022 March 08
-* Version: 0.2
+* Version: 0.3
 * Package-Requires: ((emacs "26.1") (gist "1.4.0") (s "1.12.0"))
 * Keywords: org, lisp, gist, github
 * URL: https://github.com/punchagan/org2gist/
