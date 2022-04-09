@@ -76,7 +76,9 @@ doesn't toggle the public/private status when editing gists."
                             :description title)))
               (gh-gist-edit api g))))
         (kill-buffer export-buffer)
-        (message "Gist URL: %s (copied to clipboard)" (car kill-ring))))))
+        (let ((url (car kill-ring)))
+          (message "Gist URL: %s (copied to clipboard)" (car kill-ring))
+          url)))))
 
 (provide 'org2gist)
 ;;; org2gist.el ends here
