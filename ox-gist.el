@@ -1,4 +1,4 @@
-;;; org2gist.el --- Easily share an org subtree as a gist
+;;; ox-gist.el --- Org mode exporter for GitHub gists
 
 ;; Copyright (C) 2022 Puneeth Chaganti
 
@@ -37,7 +37,7 @@
 (require 'org)
 (require 'ox-org)
 
-(defun org2gist--get-export-options (subtreep)
+(defun org-gist-export--get-export-options (subtreep)
   "Find GIST_ID for a buffer or subtree based on SUBTREEP.
 
 When getting the export options while exporting a subtree, we try
@@ -53,7 +53,7 @@ GIST_ID export option."
       (org-export--get-subtree-options 'gist)
     (org-export--get-inbuffer-options 'gist)))
 
-(defun org2gist-dwim (&optional public async subtreep visible-only body-only ext-plist)
+(defun org-gist-export-dwim (&optional public async subtreep visible-only body-only ext-plist)
   "Post or update current org buffer or subtree as a gist.
 
 If PUBLIC is non-nil, the gist is posted as a public gist.
@@ -73,7 +73,7 @@ the `org-org-export-as-org' function."
 
   (save-window-excursion
     (save-excursion
-      (let* ((export-options (org2gist--get-export-options subtreep))
+      (let* ((export-options (org-gist-export--get-export-options subtreep))
              (gist-id (plist-get export-options :gist_id))
              (title (or (org-no-properties (car (plist-get export-options :title)))
                         (file-name-nondirectory (buffer-file-name))))
@@ -109,5 +109,35 @@ the `org-org-export-as-org' function."
           (message "Gist URL: %s (copied to clipboard)" (car kill-ring))
           url)))))
 
-(provide 'org2gist)
-;;; org2gist.el ends here
+(org-export-define-derived-backend 'gist 'org
+  :menu-entry
+  '(?G "Export to GitHub gist"
+       ((?g "Private gist"
+            (lambda (a s v b)
+              (org-gist-export-to-gist nil nil a s v b)))
+        (?G "Public gist"
+            (lambda (a s v b)
+                (org-gist-export-to-gist 'public nil a s v b)))
+        (?o "Create & open private gist"
+            (lambda (a s v b)
+                (org-gist-export-to-gist nil 'open a s v b)))
+        (?O "Create & open public gist"
+            (lambda (a s v b)
+                (org-gist-export-to-gist 'public 'open a s v b)))))
+  :options-alist '((:gist_id "GIST_ID" nil nil t)))
+
+(defun org-gist-export-to-gist (&optional public open async subtreep visible-only body-only ext-plist)
+  "Export to gist.
+
+SUBTREEP exports only the subtree.
+If PUBLIC is non-nil, the export creates a public gist.
+If OPEN is non-nil the gist is opened in a browser.
+
+ASYNC, VISIBLE-ONLY, BODY-ONLY, EXT-PLIST are simply passed onto
+the `org-org-export-as-org' function."
+  (let ((url
+         (org-gist-export-dwim public async subtreep visible-only body-only ext-plist)))
+    (when open (browse-url url))))
+
+(provide 'ox-gist)
+;;; ox-gist.el ends here
