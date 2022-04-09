@@ -1,4 +1,4 @@
-# org2gist.el --- Easily share an org subtree as a gist
+# ox-gist.el --- Org mode exporter for GitHub gists
 
 Copyright (C) 2022 Puneeth Chaganti
 
@@ -18,6 +18,13 @@ Licensed under the [GPL version 3](http://www.gnu.org/licenses/) or later.
 Often, I find myself wanting to share a subtree from my notes file,
 publicly.  It is convenient to use gists for this, since GitHub renders the
 org syntax correctly.  This package makes it easy to do that.
+
+# Usage
+
+Once you install and load the package, you can use the `` `org-export-dispatch' ``
+function (usually bound to `` `C-c C-e' ``) to "export" a buffer or a subtree to a
+GitHub gist.  The org export menu provides options to export as a public or
+private gist, and to open the gist in a browser after publishing it.
 
 
 
