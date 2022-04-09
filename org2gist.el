@@ -35,34 +35,63 @@
 (require 'gist)
 (require 's)
 (require 'org)
+(require 'ox-org)
 
-(defun org2gist-subtree-dwim (&optional public)
-  "Post or update current org subtree as a gist.
+(defun org2gist--get-export-options (subtreep)
+  "Find GIST_ID for a buffer or subtree based on SUBTREEP.
 
-If PUBLIC is non-nil, the gist is posted as a public gist.  Call
-the function with a prefix arg (`universal-argument') to post a
-public gist.  NOTE: The argument only works for new gists.  It
-doesn't toggle the public/private status when editing gists."
+When getting the export options while exporting a subtree, we try
+to look for any parent subtrees which may have defined the
+GIST_ID export option."
+  (when subtreep
+    (let ((gist-id (org-entry-get-with-inheritance "EXPORT_GIST_ID")))
+      (and gist-id
+           (and (goto-char (org-find-property "EXPORT_GIST_ID" gist-id))
+                ;; org-export--get-subtree-options gives parent value if on subtree headline
+                (forward-line 1)))))
+  (if subtreep
+      (org-export--get-subtree-options 'gist)
+    (org-export--get-inbuffer-options 'gist)))
 
-  (interactive "p")
+(defun org2gist-dwim (&optional public async subtreep visible-only body-only ext-plist)
+  "Post or update current org buffer or subtree as a gist.
+
+If PUBLIC is non-nil, the gist is posted as a public gist.
+NOTE: The argument only works for new gists.  It doesn't toggle
+the public/private status when editing gists.
+
+If SUBTREEP is non-nil, the current subtree is exported as a
+Gist.  If a parent of the current subtree has a GIST_ID property
+set, the parent subtree is exported.  This is done to prevent
+accidentally re-exporting parts of an already published Gist,
+when trying to update it.  To publish, the subtree separately,
+remove the parent's GIST_ID temporarily and publish.  Once
+published, the sub-subtree will be updated correctly.
+
+ASYNC, VISIBLE-ONLY, BODY-ONLY, EXT-PLIST are simply passed onto
+the `org-org-export-as-org' function."
+
   (save-window-excursion
     (save-excursion
-      (let* ((org-export-with-toc nil)
-             (org-export-with-sub-superscripts '{})
-             (switch-to-buffer-preserve-window-point t)
-             (gist-id (org-entry-get-with-inheritance "GIST_ID"))
-             (_ (and gist-id (goto-char (org-find-property "GIST_ID" gist-id))))
-             (title (org-get-heading t t t t))
+      (let* ((export-options (org2gist--get-export-options subtreep))
+             (gist-id (plist-get export-options :gist_id))
+             (title (or (org-no-properties (car (plist-get export-options :title)))
+                        (file-name-nondirectory (buffer-file-name))))
              (filename (format "%s.org" (s-dashed-words title)))
              (content-buffer (current-buffer))
-             (export-buffer (org-org-export-as-org nil t nil t))
+             (switch-to-buffer-preserve-window-point t)
+             (export-buffer (org-org-export-as-org async subtreep visible-only body-only ext-plist))
              gist)
         (if (null gist-id)
             (cl-letf (((symbol-function 'gist-ask-for-description-maybe) (lambda () title)))
               (rename-buffer filename)
-              (gist-region (point-min) (point-max) (= public '1))
+              (gist-region (point-min) (point-max) (null public))
               (switch-to-buffer content-buffer)
-              (org-set-property "GIST_ID" (car (last (split-string (current-kill 0 t) "/")))))
+              (let ((gist-id (car (last (split-string (current-kill 0 t) "/")))))
+                (if subtreep
+                    (org-set-property "EXPORT_GIST_ID" gist-id)
+                  (goto-char (point-min))
+                  (insert (format "#+GIST_ID: %s\n" gist-id)))))
           (gist-fetch gist-id)
           (replace-buffer-contents export-buffer)
           (gist-mode-edit-buffer filename)
