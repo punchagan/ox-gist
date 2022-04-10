@@ -1,4 +1,4 @@
-# ox-gist.el --- Org mode exporter for GitHub gists
+# ox-gist.el --- Export Org mode buffers and subtrees to GitHub gists
 
 Copyright (C) 2022 Puneeth Chaganti
 
@@ -15,16 +15,19 @@ Licensed under the [GPL version 3](http://www.gnu.org/licenses/) or later.
 
 # Commentary
 
-Often, I find myself wanting to share a subtree from my notes file,
-publicly.  It is convenient to use gists for this, since GitHub renders the
-org syntax correctly.  This package makes it easy to do that.
+I often find myself wanting to share a subtree from or an entire Org mode
+file publicly.  It's convenient to use GitHub gists for this, since GitHub
+renders Org mode syntax almost correctly.  This package makes it easy to do
+that.  The heavy lifting of creating and updating gists is delegated to
+@defunkt's `` `gist.el' ``.
 
 # Usage
 
-Once you install and load the package, you can use the `` `org-export-dispatch' ``
-function (usually bound to `` `C-c C-e' ``) to "export" a buffer or a subtree to a
-GitHub gist.  The org export menu provides options to export as a public or
-private gist, and to open the gist in a browser after publishing it.
+`` `ox-gist' `` can be installed from Melpa.  Once you install and load the
+package, you can use the `` `org-export-dispatch' `` function (usually bound to
+`` `C-c C-e' ``) to "export" a buffer or a subtree to a GitHub gist.  The Org
+export menu provides options to export as a public or private gist, and to
+open the gist in a browser after publishing it.
 
 
 
